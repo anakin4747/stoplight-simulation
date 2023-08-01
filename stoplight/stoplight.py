@@ -7,12 +7,11 @@ import curses
 CLK_DIVISION = 10
 YELLOW_LIGHT_DURATION = 5
 
-inter = traffic.intersection_controller()
 
+def main(stdscr):
 
-def draw_intersection(stdscr):
+    inter = traffic.intersection_controller()
 
-    
     # Curses initialization
     curses.curs_set(0)
     stdscr.clear()
@@ -29,9 +28,8 @@ def draw_intersection(stdscr):
 
         # Collecting green light locations
         green_lights = inter.get_state() # tuple of traffic light objects
-        green_light_positions = []
-        for light in green_lights:
-            green_light_positions.append(light.green)
+
+        green_light_positions = [light.green for light in green_lights]
 
 
         # Collecting red light locations
@@ -50,9 +48,11 @@ def draw_intersection(stdscr):
         for row, col in green_light_positions:
             stdscr.addch(row, col, "0", curses.color_pair(3))
 
-        # print red lights
+        # Print red lights
         for row, col in red_light_positions:
             stdscr.addch(row, col, "0", curses.color_pair(1))
+
+        # Flush to screen
         stdscr.refresh()
 
 
@@ -64,13 +64,13 @@ def draw_intersection(stdscr):
         yellow_lights = green_lights
 
         # Collect yellow lights
-        yellow_light_positions = []
-        for light in yellow_lights:
-            yellow_light_positions.append(light.yellow)
+        yellow_light_positions = [light.yellow for light in yellow_lights]
 
         # Print yellow lights
         for row, col in yellow_light_positions:
             stdscr.addch(row, col, "0", curses.color_pair(2))
+
+        # Clear green lights
         for row, col in green_light_positions:
             stdscr.addch(row, col, "0")
 
@@ -80,5 +80,6 @@ def draw_intersection(stdscr):
         time.sleep(YELLOW_LIGHT_DURATION / CLK_DIVISION)
 
 
-curses.wrapper(draw_intersection)
+# Call main from wrapper to auto handle terminal config
+curses.wrapper(main)
 

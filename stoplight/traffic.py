@@ -1,5 +1,6 @@
 
 class traffic_light:
+    # Each color is a tuple which holds the position of the light
     def __init__(self, red, yellow, green):
         self.red = red
         self.yellow = yellow
@@ -22,10 +23,12 @@ class intersection_controller:
                                     traffic_light((14, 42), (14, 44), (14, 46)))
 
 
+    # Choose any state to start in
     def __init__(self):
         self.state = self.north_south_left_lights
 
 
+    # Returns the current pair of green lights
     def get_state(self):
         return self.state
 
@@ -37,8 +40,11 @@ class intersection_controller:
                              self.east_west_straight_lights ]
         red_light_states.remove(self.state)
         return red_light_states
+    
 
     def change_state(self):
+
+        # Rotate through 4 states
 
         if self.state == self.north_south_left_lights:
             self.state = self.north_south_straight_lights 
@@ -55,16 +61,14 @@ class intersection_controller:
 
     def state_duration(self):
 
-        if self.state == self.north_south_left_lights:
+        # Return period of time for lights to be green
+
+        if self.state == self.north_south_left_lights or \
+            self.state == self.east_west_left_lights:
             return 10
 
-        elif self.state == self.north_south_straight_lights:
-            return 30
-
-        elif self.state == self.east_west_left_lights:
-            return 10
-
-        elif self.state == self.east_west_straight_lights:
+        elif self.state == self.north_south_straight_lights or \
+            self.state == self.east_west_straight_lights:
             return 30
 
 
