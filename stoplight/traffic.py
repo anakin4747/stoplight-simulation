@@ -7,7 +7,7 @@ class traffic_light:
         self.green = green
 
 
-class intersection_controller:
+class intersection:
 
     # Pairs of traffic light objects represent the 4 states of the lights
     north_south_left_lights = (traffic_light((22, 36), (23, 36), (24, 36)), \
@@ -39,7 +39,7 @@ class intersection_controller:
                              self.east_west_left_lights, \
                              self.east_west_straight_lights ]
         red_light_states.remove(self.state)
-        return red_light_states
+        return  [pair.red for tup in red_light_states for pair in tup]
     
 
     def change_state(self):

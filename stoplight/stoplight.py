@@ -7,10 +7,14 @@ import curses
 CLK_DIVISION = 10
 YELLOW_LIGHT_DURATION = 5
 
+def print_lights(stdscr, lights, color):
+    for row, col in lights:
+        stdscr.addch(row, col, "0", curses.color_pair(color))
+
 
 def main(stdscr):
 
-    inter = traffic.intersection_controller()
+    inter = traffic.intersection()
 
     # Curses initialization
     curses.curs_set(0)
@@ -27,52 +31,33 @@ def main(stdscr):
         inter.change_state()
 
         # Collecting green light locations
-        green_lights = inter.get_state() # tuple of traffic light objects
-
+        green_lights = inter.get_state()
         green_light_positions = [light.green for light in green_lights]
 
-
         # Collecting red light locations
-        red_lights = inter.get_red_lights() # array of tuples of traffic light objects
-        red_light_positions = []
-
-        # Maybe move this to get_red_lights()
-        for tup in red_lights:
-            for pair in tup:
-                red_light_positions.append(pair.red)
+        red_light_positions = inter.get_red_lights() # array of tuples of traffic light objects
 
         # Print road to window
         stdscr.addstr(0, 0, traffic.road)
 
-        # Printing green lights
-        for row, col in green_light_positions:
-            stdscr.addch(row, col, "0", curses.color_pair(3))
-
-        # Print red lights
-        for row, col in red_light_positions:
-            stdscr.addch(row, col, "0", curses.color_pair(1))
+        # Printing red and green lights
+        print_lights(stdscr, green_light_positions, 3)
+        print_lights(stdscr, red_light_positions, 1)
 
         # Flush to screen
         stdscr.refresh()
 
-
-
         # Wait for green duration
         time.sleep(inter.state_duration() / CLK_DIVISION)
 
+
         # Green lights turn to yellow
         yellow_lights = green_lights
-
-        # Collect yellow lights
         yellow_light_positions = [light.yellow for light in yellow_lights]
 
-        # Print yellow lights
-        for row, col in yellow_light_positions:
-            stdscr.addch(row, col, "0", curses.color_pair(2))
-
-        # Clear green lights
-        for row, col in green_light_positions:
-            stdscr.addch(row, col, "0")
+        # Print yellow and clear green lights
+        print_lights(stdscr, yellow_light_positions, 2)
+        print_lights(stdscr, green_light_positions, 0)
 
         stdscr.refresh()
 

@@ -24,12 +24,12 @@ device=$(tmux capture-pane -t $number_of_windows.1 -p )
 tmux send-keys -t $number_of_windows.1 "clear" Enter
 dev=$(echo $device | awk '/dev/ { print $5 }')
 
-#rm .gdbinit.gdb
-#commands=("tui enable" "break main" "run < $dev > $dev")
-#for cmd in "${commands[@]}"; do
-#    echo $cmd >> .gdbinit.gdb
-#done
-#cat .gdbinit.gdb
-#
-#tmux send-keys -t $number_of_windows.0 "gdb --command .gdbinit.gdb ./stp" Enter
-#
+rm .gdbinit.gdb
+commands=("tui enable" "break main" "run stoplight/stoplight.py" "run < $dev > $dev")
+for cmd in "${commands[@]}"; do
+    echo $cmd >> .gdbinit.gdb
+done
+cat .gdbinit.gdb
+
+tmux send-keys -t $number_of_windows.0 "gdb python3 --command .gdbinit.gdb" Enter
+
