@@ -12,7 +12,8 @@ inter = traffic.intersection_controller()
 
 def draw_intersection(stdscr):
 
-    # Remove cursor
+    
+    # Curses initialization
     curses.curs_set(0)
     stdscr.clear()
     curses.start_color()
@@ -20,57 +21,61 @@ def draw_intersection(stdscr):
     curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-    # Print road to window
-    stdscr.addstr(0, 0, traffic.road)
-    stdscr.refresh()
-
-    lights = [
-
-        (10, 30, "0", curses.color_pair(3)), # South green
-        (10, 32, "0", curses.color_pair(3)), # South left green
-        (11, 30, "0", curses.color_pair(2)), # South yellow
-        (11, 32, "0", curses.color_pair(2)), # South left yellow
-        (12, 30, "0", curses.color_pair(1)), # South red
-        (12, 32, "0", curses.color_pair(1)), # South left red
-
-        (22, 36, "0", curses.color_pair(1)), # North left red
-        (22, 38, "0", curses.color_pair(1)), # North red
-        (23, 36, "0", curses.color_pair(2)), # North left yellow
-        (23, 38, "0", curses.color_pair(2)), # North yellow
-        (24, 36, "0", curses.color_pair(3)), # North left green
-        (24, 38, "0", curses.color_pair(3)), # North green
-
-        (16, 42, "0", curses.color_pair(1)), # West left red
-        (14, 42, "0", curses.color_pair(1)), # West red
-        (16, 44, "0", curses.color_pair(2)), # West left yellow
-        (14, 44, "0", curses.color_pair(2)), # West yellow
-        (16, 46, "0", curses.color_pair(3)), # West left green
-        (14, 46, "0", curses.color_pair(3)), # West green
-
-        (18, 26, "0", curses.color_pair(1)), # East left red
-        (20, 26, "0", curses.color_pair(1)), # East red
-        (18, 24, "0", curses.color_pair(2)), # East left yellow
-        (20, 24, "0", curses.color_pair(2)), # East yellow
-        (18, 22, "0", curses.color_pair(3)), # East left green
-        (20, 22, "0", curses.color_pair(3)), # East green
-
-    ]
 
     while True:
 
-        for row, col, char, color in lights:
-            stdscr.addch(row, col, char, color)
+        # Rotate lights
+        inter.change_state()
+
+        # Collecting green light locations
+        green_lights = inter.get_state() # tuple of traffic light objects
+        green_light_positions = []
+        for light in green_lights:
+            green_light_positions.append(light.green)
+
+
+        # Collecting red light locations
+        red_lights = inter.get_red_lights() # array of tuples of traffic light objects
+        red_light_positions = []
+
+        # Maybe move this to get_red_lights()
+        for tup in red_lights:
+            for pair in tup:
+                red_light_positions.append(pair.red)
+
+        # Print road to window
+        stdscr.addstr(0, 0, traffic.road)
+
+        # Printing green lights
+        for row, col in green_light_positions:
+            stdscr.addch(row, col, "0", curses.color_pair(3))
+
+        # print red lights
+        for row, col in red_light_positions:
+            stdscr.addch(row, col, "0", curses.color_pair(1))
         stdscr.refresh()
 
-        inter.change_state()
-        stdscr.addstr(0, 0, str(inter.get_state()))
-        stdscr.refresh()
+
 
         # Wait for green duration
         time.sleep(inter.state_duration() / CLK_DIVISION)
 
-        stdscr.addstr(0, 0, "Yellow")
+        # Green lights turn to yellow
+        yellow_lights = green_lights
+
+        # Collect yellow lights
+        yellow_light_positions = []
+        for light in yellow_lights:
+            yellow_light_positions.append(light.yellow)
+
+        # Print yellow lights
+        for row, col in yellow_light_positions:
+            stdscr.addch(row, col, "0", curses.color_pair(2))
+        for row, col in green_light_positions:
+            stdscr.addch(row, col, "0")
+
         stdscr.refresh()
+
         # Wait for Yellow in between
         time.sleep(YELLOW_LIGHT_DURATION / CLK_DIVISION)
 

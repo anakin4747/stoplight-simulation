@@ -1,50 +1,70 @@
-from enum import Enum, auto
 
-
-class intersection(Enum):
-    north_south_left_lights = auto()
-    north_south_straight_lights = auto()
-    east_west_left_lights = auto()
-    east_west_straight_lights = auto()
+class traffic_light:
+    def __init__(self, red, yellow, green):
+        self.red = red
+        self.yellow = yellow
+        self.green = green
 
 
 class intersection_controller:
 
+    # Pairs of traffic light objects represent the 4 states of the lights
+    north_south_left_lights = (traffic_light((22, 36), (23, 36), (24, 36)), \
+                                traffic_light((12, 32), (11, 32), (10, 32)))
+
+    north_south_straight_lights = (traffic_light((22, 38), (23, 38), (24, 38)), \
+                                    traffic_light((12, 30), (11, 30), (10, 30)))
+
+    east_west_left_lights = (traffic_light((18, 26), (18, 24), (18, 22)), \
+                                traffic_light((16, 42), (16, 44), (16, 46)))
+
+    east_west_straight_lights = (traffic_light((20, 26), (20, 24), (20, 22)), \
+                                    traffic_light((14, 42), (14, 44), (14, 46)))
+
+
     def __init__(self):
-        self.state = intersection.north_south_left_lights
+        self.state = self.north_south_left_lights
 
 
     def get_state(self):
         return self.state
 
 
+    def get_red_lights(self):
+        red_light_states = [ self.north_south_left_lights, \
+                             self.north_south_straight_lights, \
+                             self.east_west_left_lights, \
+                             self.east_west_straight_lights ]
+        red_light_states.remove(self.state)
+        return red_light_states
+
     def change_state(self):
 
-        if self.state == intersection.north_south_left_lights:
-            self.state = intersection.north_south_straight_lights 
+        if self.state == self.north_south_left_lights:
+            self.state = self.north_south_straight_lights 
             
-        elif self.state == intersection.north_south_straight_lights:
-            self.state = intersection.east_west_left_lights 
+        elif self.state == self.north_south_straight_lights:
+            self.state = self.east_west_left_lights 
 
-        elif self.state == intersection.east_west_left_lights:
-            self.state = intersection.east_west_straight_lights 
+        elif self.state == self.east_west_left_lights:
+            self.state = self.east_west_straight_lights 
 
-        elif self.state == intersection.east_west_straight_lights:
-            self.state = intersection.north_south_left_lights 
+        elif self.state == self.east_west_straight_lights:
+            self.state = self.north_south_left_lights 
 
 
     def state_duration(self):
 
-        if self.state == intersection.north_south_left_lights:
+        if self.state == self.north_south_left_lights:
             return 10
 
-        elif self.state == intersection.north_south_straight_lights:
+        elif self.state == self.north_south_straight_lights:
             return 30
 
-        elif self.state == intersection.east_west_left_lights:
+        elif self.state == self.east_west_left_lights:
             return 10
 
-        elif self.state == intersection.east_west_straight_lights:
+        elif self.state == self.east_west_straight_lights:
             return 30
 
 
@@ -80,4 +100,4 @@ road = """
                             |  |  |  |  |
                             |  v  |  |  |
                             |     |     |
-    """
+"""
