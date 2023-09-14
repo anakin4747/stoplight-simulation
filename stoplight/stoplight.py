@@ -5,7 +5,7 @@ import time
 import curses
 
 # Can be increased to speed up program
-CLK_DIVISION = 1
+CLK_DIVISION = 10
 YELLOW_LIGHT_DURATION = 5
 
 def print_lights(stdscr, lights, color):
