@@ -7,7 +7,7 @@ displaying.
 
 The docker image can be run with the following commands:
 
-$ docker pull anakin7474/stoplight:latest
+    $ docker pull anakin7474/stoplight:latest
 
-$ docker run -it --rm anakin7474/stoplight
+    $ docker run -it --rm anakin7474/stoplight
 
