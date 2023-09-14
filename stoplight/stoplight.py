@@ -22,7 +22,10 @@ def main(stdscr):
     stdscr.clear()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    # curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    # Switch this line for the one above to use a different color for yellow lights
+    # since Windows command prompts don't support colors the same way UNIX based ones do
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
 
